@@ -22,6 +22,7 @@
     <!-- Custom styles for this template-->
     <link href="Admin/css/sb-admin-2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="path/to/style.css">
+    <link rel="icon" type="image/png" href="image/e.jpg">
     <style>
     .btn-primary {
         background-color: #007bff;

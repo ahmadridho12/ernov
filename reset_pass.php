@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <link href="Admin/css/sb-admin-2.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <link rel="icon" type="image/png" href="image/e.jpg">
   <style>
     
     body {

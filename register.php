@@ -23,6 +23,7 @@ include_once "koneksi.php";
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="image/e.jpg">
     <link rel="stylesheet" href="path/to/style.css">
     <style>
     .btn-primary {

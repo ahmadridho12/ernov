@@ -16,6 +16,7 @@ include_once "koneksi.php";
     <!-- di bawah ini buat akses css nya -->
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="image/e.jpg">
     
     <title>Daftar Page</title>
 </head>

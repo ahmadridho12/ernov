@@ -17,6 +17,7 @@ $data = mysqli_fetch_array($ambildata);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form Input Pengguna</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="images/e.jpg">
 </head>
 <body>
     <div class="container">
