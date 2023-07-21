@@ -145,9 +145,9 @@
 
           $select = mysqli_query($koneksi, "UPDATE login SET password=MD5('$pass') WHERE email='$email'") or die(mysqli_error());
           if($select) {
-              echo "<script> alert('Reset password berhasil'); window.location = 'beranda.php'; </script>";
+              echo "<script> alert('Reset password berhasil'); window.location = 'login1.php'; </script>";
           } else {
-              echo "<script>alert('Gagal Menyimpan '); window.location = 'beranda.php';</script>";
+              echo "<script>alert('Gagal Menyimpan '); window.location = 'login1.php';</script>";
           }
       }
       ?>

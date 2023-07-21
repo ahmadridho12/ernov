@@ -21,7 +21,7 @@ $stock = $fetch['stock'];
      $img = 'No Photo';
  } else {
      // jika ada gambar
-     $img = '<img src="images/'.$gambar.'" class="zoomable">';
+     $img = '<img src="../Admin/images/'.$gambar.'" class="zoomable">';
  }
 
 
@@ -40,7 +40,7 @@ $stock = $fetch['stock'];
         <title>Detail Barang Barang</title>
         <link href="css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
-        <link rel="icon" type="image/png" href="images/e.jpg">
+        <link rel="icon" type="image/png" href="../image/e.jpg">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
         <style>
             .zoomable {
@@ -82,29 +82,31 @@ $stock = $fetch['stock'];
                 <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                     <div class="sb-sidenav-menu">
                         <div class="nav">
+                            
                         <a class="nav-link" href="index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Beranda
                             </a>
                             <a class="nav-link" href="stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
-                                Stock Barang
-                            </a>
-                            <a class="nav-link" href="kategori.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
-                                Kategori Barang
+                                <div class="sb-nav-link-icon"></div>
+                                Stok Barang
                             </a>
                             <a class="nav-link" href="masuk.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-sign-in-alt"></i></div>
-                                Barang Masuk
+                                <div class="sb-nav-link-icon"></i></div>
+                                Barang masuk
                             </a>
                             <a class="nav-link" href="keluar.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
+                                <div class="sb-nav-link-icon"></i></div>
                                 Barang Keluar
                             </a>
+                            
                             <a class="nav-link" href="list-user.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                                Daftar Pengguna
+                                <div class="sb-nav-link-icon"></i></div>
+                                list User
+                            </a>
+                            
+                            
+                            <!-- Navbar-->
                             
                         </div>
                     </div>

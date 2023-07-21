@@ -61,16 +61,16 @@ include_once "koneksi.php";
 
 </head>
 
-<body class="bg-gradient-primary">
+<body class="bg-gradient-primary" >
 
-    <div class="container">
+    <div class="container" style="margin-top :150px" >
 
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
                     <div class="col-lg-5 d-none d-lg-flex align-items-center justify-content-center mx-auto">
-                    <img src="image/ernov.jpg" alt="Ernov" style="max-width: 100%; height: auto;">
+                    <img src="image/ernov.jpg" alt="Ernov" style="max-width: 100%; height: auto; margin-left : 50px">
                     </div>
                     <div  class="col-lg-7">
                         <div class="p-5">
