@@ -55,11 +55,19 @@ $stock = $fetch['stock'];
                 padding-top:25px;
                 
             }
+            .navbar-brand img {
+            width: 150px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            }
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand" href="index.html">ERNOV</a>
+            <a class="navbar-brand" href="pimpinan_index.php">
+            <img src="../image/ernov.png" alt="Ernov">
+            </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             
             <!-- Navbar-->
@@ -69,9 +77,6 @@ $stock = $fetch['stock'];
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
-                    <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
             </li>
@@ -83,22 +88,24 @@ $stock = $fetch['stock'];
                     <div class="sb-sidenav-menu">
                         <div class="nav">
                             
-                        <a class="nav-link" href="pimpinan_index.php">
+                            <a class="nav-link" href="pimpinan_index.php">
                                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                                 Beranda
                             </a>
+                            
                             <a class="nav-link" href="pimpinan_stock.php">
-                                <div class="sb-nav-link-icon"></div>
-                                Stok Barang
+                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                                Stock Barang
                             </a>
                             <a class="nav-link" href="pimpinan_masuk.php">
-                                <div class="sb-nav-link-icon"></i></div>
-                                Barang masuk
+                                <div class="sb-nav-link-icon"><i class="fas fa-sign-in-alt"></i></div>
+                                Barang Masuk
                             </a>
                             <a class="nav-link" href="pimpinan_keluar.php">
-                                <div class="sb-nav-link-icon"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
                                 Barang Keluar
                             </a>
+                           
                             
                            
                             

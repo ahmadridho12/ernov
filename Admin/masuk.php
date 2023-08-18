@@ -11,6 +11,19 @@ if ($_SESSION['role'] !="admin"){
 
 $get1 = mysqli_query($conn, "select * from masuk");
 $count1 = mysqli_num_rows($get1);
+
+///////// quantity barang masuk
+$queryTotalQtyMasuk = mysqli_query($conn, "SELECT SUM(qty) AS total_qty_masuk FROM masuk");
+$rowTotalQtyMasuk = mysqli_fetch_assoc($queryTotalQtyMasuk);
+$totalQtyMasuk = $rowTotalQtyMasuk['total_qty_masuk'];
+
+// Periksa apakah sesi sudah dimulai
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,15 +52,32 @@ $count1 = mysqli_num_rows($get1);
                 top: 0;
                 left: 0;
             }
+            .text-right {
+            position: relative;
+            left: 1100px;
+            }
+            .text-right p {
+                margin-bottom: 0;
+            }
+            .hg{
+                font-size:12px;
+            }
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <a class="navbar-brand" href="index.html">
-            <img src="images/ernov.jpg" alt="Ernov">
+            <img src="images/ernov.png" alt="Ernov">
             </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-            
+            <div class="text-right">
+            <p style="color: white;">
+            <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+            <span class="hg" style="color: white;">admin</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
@@ -55,8 +85,6 @@ $count1 = mysqli_num_rows($get1);
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
@@ -74,7 +102,7 @@ $count1 = mysqli_num_rows($get1);
                                 Beranda
                             </a>
                             <a class="nav-link" href="stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-cube"></i></div>
                                 Stock Barang
                             </a>
                             <a class="nav-link" href="kategori.php">
@@ -105,25 +133,30 @@ $count1 = mysqli_num_rows($get1);
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mt-4">Barang Masuk</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Barang Masuk</li>
-                        </ol>
-                       
-                      
+                        <h1 class="mt-4">Barang Masuk</h1> 
                         <div class="card mb-4">
                             <div class="card-header">
                                  <!-- Button to Open the Modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
                                     Tambah Barang Masuk
                                 </button>
-                                <a href="export-barang-masuk.php" class="btn btn-info"> Cetak Laporan </a> 
+                                <a href="export-barang-masuk.php" class="btn btn-info float-right">
+                                    <i class="fas fa-print"></i> 
+                                </a>
                                 <br>
-                                <ul class="list-group">
-                                <li class="list-group-item"><h5>Total Barang masuk : <?=$count1;?></h5></li>
-                               
-                                </ul>
-
+                                <br>
+                                <div class="row justify-content-left">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-warning text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Total Barang Masuk</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$totalQtyMasuk;?> Pcs</strong>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                </div>
                                 <div class="row mt-4">
                                 <div class="col">
 
@@ -145,13 +178,13 @@ $count1 = mysqli_num_rows($get1);
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
-                                                <th>tanggal</th>
+                                                <th>Tanggal</th>
                                                 <th>Gambar</th>
                                                 <th>Nama Barang</th>
                                                 <th>Harga </th>
                                                 <th>Jumlah</th>
                                                 <th>Tujuan</th>
-                                                <th>Aksi</th>
+                                                <th style="text-align: right;">Aksi</th>
 
             
                                                 
@@ -167,13 +200,14 @@ $count1 = mysqli_num_rows($get1);
 
                                                 if($mulai!=null || $selesai!=null){
 
-                                                    $ambilsemuadatastock = mysqli_query($conn, "select * from masuk m, stok s where s.id_barang = m.id_barang and tanggal BETWEEN '$mulai' and DATE_ADD('$selesai', INTERVAL 1 DAY)  ");
+                                                    $ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM masuk m, stok s WHERE s.id_barang = m.id_barang AND tanggal BETWEEN '$mulai' AND DATE_ADD('$selesai', INTERVAL 1 DAY) ORDER BY m.tanggal DESC");
                                                 } else {
-                                                    $ambilsemuadatastock = mysqli_query($conn, "select * from masuk m, stok s WHERE s.id_barang = m.id_barang ");
+                                                    $ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM masuk m, stok s WHERE s.id_barang = m.id_barang ORDER BY m.id_masuk DESC");
                                                 }
                                                 
                                             } else {
-                                                $ambilsemuadatastock = mysqli_query($conn, "select * from masuk m, stok s WHERE s.id_barang = m.id_barang ");
+                                                $ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM masuk m, stok s WHERE s.id_barang = m.id_barang ORDER BY m.id_masuk DESC");
+                                            
                                             }
 
                                             while ($data = mysqli_fetch_array($ambilsemuadatastock)) {
@@ -203,14 +237,14 @@ $count1 = mysqli_num_rows($get1);
                                                 <td>Rp<?php echo number_format($harga, 0,',','.'); ?></td>
                                                 <td><?=$qty;?></td>
                                                 <td><?=$keterangan;?></td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idm;?>">
-                                                    Ubah
-                                                </button> 
+                                                <i class="fas fa-edit"></i> 
                                                 
                                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idm;?>">
-                                                    Hapus
-                                                 </button> 
+                                                <i class="fas fa-trash-alt"></i> 
+                                                </button>
+
                                                 </td>
                                                 
                                             </tr>
@@ -273,7 +307,8 @@ $count1 = mysqli_num_rows($get1);
                                                     <input type="hidden" name="idm" value="<?=$idm;?>">
                                                     <br>
                                                     <br>
-                                                    <button type="submit" class="btn btn-danger" name="hapusbarangmasuk">Submit</button>
+                                                    <button type="submit" class="btn btn-danger" name="hapusbarangmasuk">Ya</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                                     <br>
                                                     </div>
                                                     </form>

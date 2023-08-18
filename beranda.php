@@ -37,15 +37,21 @@
     .btn-primary:hover {
         background-color: #0069d9;
     }
+    body {
+            background-image: url("image/2.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 </style>
 
 </head>
 
-<body class="bg-gradient-primary">
+<body >
 
     <div class="container">
-
-        <div class="card o-hidden border-0 shadow-lg my-5">
+    <div class="container" style="margin-top :200px">
+        <div class="card o-hidden border-0 shadow-lg my-5"  >
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">

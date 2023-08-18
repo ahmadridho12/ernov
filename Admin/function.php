@@ -51,6 +51,15 @@ if (isset($_POST['addnewbarang'])) {
         move_uploaded_file($file_tmp, 'images/' . $image);
     }
 
+    if ($harga <= 0) {
+        echo '
+        <script>
+            alert("Harga tidak boleh negatif (minus)");
+            window.location.href = "stock.php";
+        </script>';
+        exit();
+        
+    }
     $cek = mysqli_query($conn, "SELECT * FROM stok WHERE nama_barang = '$nama_barang'");
     $hitung = mysqli_num_rows($cek);
 
@@ -146,8 +155,9 @@ if (isset($_POST['addnewkategori'])) {
         $iduser = $_POST['id_user'];
         $email = $_POST['email'];
         $username = $_POST['username'];
+        $role = $_POST['role'];
 
-        $updateuser = mysqli_query($conn, "UPDATE login SET email = '$email', username= '$username' WHERE id_user = '$iduser'");
+        $updateuser = mysqli_query($conn, "UPDATE login SET email = '$email', username= '$username', role = '$role' WHERE id_user = '$iduser'");
         if ($updateuser) {
             header('location: list-user.php');
         } else {
@@ -178,6 +188,17 @@ if (isset($_POST['addnewkategori'])) {
     $barangnya = $_POST['barangnya'];
     $Penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
+
+    // Validasi qty tidak boleh nol atau minus
+    if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang masuk tidak valid");
+            window.location.href = "masuk.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+    }
     $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stok where id_barang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstocksekarang);
 
@@ -210,6 +231,17 @@ if (isset($_POST['addnewkategori'])) {
     $barangnya = $_POST['barangnya'];
     $Penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
+
+    // Validasi qty tidak boleh nol atau minus
+    if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang keluar tidak valid");
+            window.location.href = "keluar.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+    }
     $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stok where id_barang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstocksekarang);
 
@@ -258,8 +290,21 @@ if (isset($_POST['addnewkategori'])) {
     $harga = $_POST['harga'];
     $deskripsi = $_POST['deskripsi'];
     
-
-     //soal gambar
+     // Validasi harga tidak boleh minus
+     if ($harga < 0) {
+        echo '<script>alert("Harga Tidak Boleh minus");</script>';
+        echo '<script>window.location.href = "stock.php";</script>';
+        exit(); // Hentikan eksekusi jika harga minus
+    }
+    // Validasi nama tidak boleh sama dengan data lain
+    $cek_nama_query = mysqli_query($conn, "SELECT COUNT(*) as total FROM stok WHERE nama_barang = '$nama_barang' AND id_barang != '$idb'");
+    $cek_nama_result = mysqli_fetch_assoc($cek_nama_query);
+    if ($cek_nama_result['total'] > 0) {
+        echo '<script>alert("Nama Barang Sudah Ada. Silakan Gunakan Nama Lain");</script>';
+        echo '<script>window.location.href = "stock.php";</script>';
+        exit(); // Hentikan eksekusi jika nama sudah ada
+    }
+     //validasi soal gambar
      $allowed_extension = array('png', 'jpg');
      $nama = $_FILES['file']['name']; // ambil nama gambar
      $dot = explode('.',$nama);
@@ -332,6 +377,17 @@ if (isset($_POST['addnewkategori'])) {
         $idm = $_POST['idm'];
         $keterangan = $_POST['keterangan'];
         $qty = $_POST['qty'];
+
+        // Validasi qty tidak boleh nol atau minus
+    if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang masuk tidak valid");
+            window.location.href = "masuk.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+    }
 
         $lihatstock = mysqli_query($conn, "select * from stok where id_barang='$idb'");
         $stocknya = mysqli_fetch_array($lihatstock);
@@ -417,6 +473,17 @@ if (isset($_POST['addnewkategori'])) {
             $idk = $_POST['idk'];
             $penerima = $_POST['penerima'];
             $qty = $_POST['qty'];
+
+            // Validasi qty tidak boleh nol atau minus
+        if ($qty <= 0) {
+            echo '
+            <script>
+                alert("Quantity tidak valid");
+                window.location.href = "keluar.php";
+            </script>
+            ';
+            exit(); // Hentikan eksekusi jika qty tidak valid
+        }
     
             $lihatstock = mysqli_query($conn, "select * from stok where id_barang='$idb'");
             $stocknya = mysqli_fetch_array($lihatstock);

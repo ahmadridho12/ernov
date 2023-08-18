@@ -13,7 +13,18 @@ if ($_SESSION['role'] !="pimpinan"){
 $get1 = mysqli_query($conn, "select * from stok");
 $count1 = mysqli_num_rows($get1);
 
+//////// stok
+$queryTotalStock = mysqli_query($conn, "SELECT SUM(stock) AS total_stock FROM stok");
+$rowTotalStock = mysqli_fetch_assoc($queryTotalStock);
+$totalStock = $rowTotalStock['total_stock'];
 
+// Periksa apakah sesi sudah dimulai
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -49,16 +60,33 @@ $count1 = mysqli_num_rows($get1);
                 top: 0;
                 left: 0;
             }
-          
+            .text-right {
+            position: relative;
+            left: 1100px;
+            }
+
+            .text-right p {
+                margin-bottom: 0;
+            }
+            .hg{
+                font-size:12px;
+            }
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">
-        <img src="../image/ernov.jpg" alt="Ernov">
-        </a>
+        <a class="navbar-brand" href="pimpinan_index.php">
+            <img src="../image/ernov.png" alt="Ernov">
+            </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-            
+            <div class="text-right">
+            <p style="color: white;">
+                <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+                <span class="hg" style="color: white;">pimpinan</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
@@ -66,8 +94,6 @@ $count1 = mysqli_num_rows($get1);
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
@@ -124,13 +150,29 @@ $count1 = mysqli_num_rows($get1);
                                 
                                 
                                 
-                                <a href="export_pimpinan.php" class="btn btn-info"> Cetak Laporan </a> 
-                                <br>
-                                <br>
-                                <ul class="list-group">
-                                <li class="list-group-item"><h5>Total Barang : <?=$count1;?></h5></li>
-                               
-                                </ul>
+                                <a href="export_pimpinan.php" class="btn btn-info float-right">
+                                <i class="fas fa-print"></i> 
+                                </a> 
+                                <div class="row justify-content-center">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-danger text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Total Produk</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$count1;?> Pcs</strong>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-primary text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Total Barang Tersedia</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$totalStock;?> Pcs</strong>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="card mb-4">
@@ -140,24 +182,7 @@ $count1 = mysqli_num_rows($get1);
                             </div>
                             <div class="card-body">
 
-                                <?php
-                                    $ambildatastock = mysqli_query($conn, "select * from stok where stock < 1");
-
-                                    while($fetch=mysqli_fetch_array($ambildatastock)){
-                                        $barang = $fetch['nama_barang'];
-
-                                        
-                                        
-                                        ?>
-                                <div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <strong>Perhatian!</strong> Stock <?=$barang;?> telah habis.
-                                </div>
-                                <?php
-                                     }
-
-
-                                ?>
+                               
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>

@@ -11,6 +11,19 @@ if ($_SESSION['role'] !="pimpinan"){
 
 $get1 = mysqli_query($conn, "select * from masuk");
 $count1 = mysqli_num_rows($get1);
+
+///////// quantity barang masuk
+$queryTotalQtyMasuk = mysqli_query($conn, "SELECT SUM(qty) AS total_qty_masuk FROM masuk");
+$rowTotalQtyMasuk = mysqli_fetch_assoc($queryTotalQtyMasuk);
+$totalQtyMasuk = $rowTotalQtyMasuk['total_qty_masuk'];
+
+// Periksa apakah sesi sudah dimulai
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,15 +52,33 @@ $count1 = mysqli_num_rows($get1);
                 top: 0;
                 left: 0;
             }
+            .text-right {
+            position: relative;
+            left: 1100px;
+            }
+
+            .text-right p {
+                margin-bottom: 0;
+            }
+            .hg{
+                font-size:12px;
+            }
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <a class="navbar-brand" href="index.html">
-            <img src="../image/ernov.jpg" alt="Ernov">
+        <a class="navbar-brand" href="pimpinan_index.php">
+            <img src="../image/ernov.png" alt="Ernov">
             </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-            
+            <div class="text-right">
+            <p style="color: white;">
+                <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+                <span class="hg" style="color: white;">pimpinan</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
@@ -55,8 +86,6 @@ $count1 = mysqli_num_rows($get1);
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
@@ -86,9 +115,6 @@ $count1 = mysqli_num_rows($get1);
                                 <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
                                 Barang Keluar
                             </a>
-                           
-                            
-                            
                             <!-- Navbar-->
                             
                         </div>
@@ -100,21 +126,23 @@ $count1 = mysqli_num_rows($get1);
                 <main>
                     <div class="container-fluid">
                         <h1 class="mt-4">Barang Masuk</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Barang Masuk</li>
-                        </ol>
-                       
-                      
                         <div class="card mb-4">
                             <div class="card-header">
                                  <!-- Button to Open the Modal -->
                              
-                                <a href="export-barang-masuk_pimpinan.php" class="btn btn-info"> Cetak Laporan </a> 
-                                <br>
-                                <ul class="list-group">
-                                <li class="list-group-item"><h5>Total Barang masuk : <?=$count1;?></h5></li>
-                               
-                                </ul>
+                                <a href="export-barang-masuk_pimpinan.php" class="btn btn-info float-right">
+                                <i class="fas fa-print"></i> 
+                                </a> 
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-warning text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Total Barang Masuk</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$totalQtyMasuk;?> Pcs</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                                 <div class="row mt-4">
                                 <div class="col">

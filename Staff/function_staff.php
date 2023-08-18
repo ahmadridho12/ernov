@@ -24,6 +24,17 @@ $conn = mysqli_connect("localhost","root","","ernov");
     $barangnya = $_POST['barangnya'];
     $Penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
+
+    // Validasi qty tidak boleh nol atau minus
+    if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang masuk tidak valid");
+            window.location.href = "staff_masuk.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+    }
     $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stok where id_barang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstocksekarang);
 
@@ -35,7 +46,11 @@ $conn = mysqli_connect("localhost","root","","ernov");
     $addtomasuk = mysqli_query($conn, "insert into masuk (id_barang, keterangan, qty) values ('$barangnya', '$Penerima','$qty')");
     $updatestockmasuk = mysqli_query($conn,"update stok set stock ='$tambahakanstocksekarangdenganquantity' where id_barang='$barangnya'");
     if($addtomasuk&&$updatestockmasuk){
-        header('location: staff_masuk.php');
+        echo '
+        <script>
+            alert("Barang masuk berhasil ditambahkan");
+            window.location.href="staff_masuk.php";
+        </script>';
     }else {
         echo 'gagal';
         header('location: staff_masuk.php');
@@ -52,6 +67,17 @@ $conn = mysqli_connect("localhost","root","","ernov");
     $barangnya = $_POST['barangnya'];
     $Penerima = $_POST['penerima'];
     $qty = $_POST['qty'];
+
+    // Validasi qty tidak boleh nol atau minus
+    if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang keluar tidak valid");
+            window.location.href = "staff_keluar.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+    }
     $cekstocksekarang = mysqli_query($conn, "SELECT * FROM stok where id_barang = '$barangnya'");
     $ambildatanya = mysqli_fetch_array($cekstocksekarang);
 
@@ -67,7 +93,11 @@ $conn = mysqli_connect("localhost","root","","ernov");
         $addtokeluar = mysqli_query($conn, "insert into keluar (id_barang, penerima, qty) values ('$barangnya', '$Penerima','$qty')");
         $updatestockmasuk = mysqli_query($conn,"update stok set stock ='$tambahakanstocksekarangdenganquantity' where id_barang='$barangnya'");
         if($addtokeluar&&$updatestockmasuk){
-            header('location: staff_keluar.php');
+            echo '
+        <script>
+            alert("Barang keluar berhasil ditambahkan");
+            window.location.href="staff_keluar.php";
+        </script>';
         }else {
             echo 'gagal';
             header('location: staff_keluar.php');
@@ -111,6 +141,17 @@ $conn = mysqli_connect("localhost","root","","ernov");
         $idm = $_POST['idm'];
         $keterangan = $_POST['keterangan'];
         $qty = $_POST['qty'];
+
+        // Validasi qty tidak boleh nol atau minus
+         if ($qty <= 0) {
+        echo '
+        <script>
+            alert("Jumlah barang masuk tidak valid");
+            window.location.href = "staff_masuk.php";
+        </script>
+        ';
+        exit(); // Hentikan eksekusi jika qty tidak valid
+        }
 
         $lihatstock = mysqli_query($conn, "select * from stok where id_barang='$idb'");
         $stocknya = mysqli_fetch_array($lihatstock);
@@ -196,7 +237,17 @@ $conn = mysqli_connect("localhost","root","","ernov");
             $idk = $_POST['idk'];
             $penerima = $_POST['penerima'];
             $qty = $_POST['qty'];
-    
+            
+            // Validasi qty tidak boleh nol atau minus
+             if ($qty <= 0) {
+            echo '
+            <script>
+                alert("Quantity tidak valid");
+                window.location.href = "staff_keluar.php";
+            </script>
+            ';
+            exit(); // Hentikan eksekusi jika qty tidak valid
+            }
             $lihatstock = mysqli_query($conn, "select * from stok where id_barang='$idb'");
             $stocknya = mysqli_fetch_array($lihatstock);
             $stockskrg = $stocknya['stok'];

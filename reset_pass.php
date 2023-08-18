@@ -73,9 +73,15 @@
       margin-top: 10px;
       display: block;
     }
+    body {
+            background-image: url("image/2.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
   </style>
 </head>
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" >
 <div class="login-box">
   <div class="card">
     <div class="card-body login-card-body">

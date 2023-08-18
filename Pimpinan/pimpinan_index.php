@@ -8,16 +8,26 @@ if ($_SESSION['role'] !="pimpinan"){
 
     
 }
+//////// stok
+$queryTotalStock = mysqli_query($conn, "SELECT SUM(stock) AS total_stock FROM stok");
+$rowTotalStock = mysqli_fetch_assoc($queryTotalStock);
+$totalStock = $rowTotalStock['total_stock'];
+
+///////// quantity barang masuk
+$queryTotalQtyMasuk = mysqli_query($conn, "SELECT SUM(qty) AS total_qty_masuk FROM masuk");
+$rowTotalQtyMasuk = mysqli_fetch_assoc($queryTotalQtyMasuk);
+$totalQtyMasuk = $rowTotalQtyMasuk['total_qty_masuk'];
+
+/////// quantity barang keluar
+$queryTotalQtyKeluar = mysqli_query($conn, "SELECT SUM(qty) AS total_qty_keluar FROM keluar");
+$rowTotalQtyKeluar = mysqli_fetch_assoc($queryTotalQtyKeluar);
+$totalQtyKeluar = $rowTotalQtyKeluar['total_qty_keluar'];
+
 //// get data
 //ambil data total
 $get1 = mysqli_query($conn, "select * from stok");
-$get2 = mysqli_query($conn, "select * from masuk");
-$get3 = mysqli_query($conn, "select * from keluar");
-
-
 $count1 = mysqli_num_rows($get1);
-$count2 = mysqli_num_rows($get2);
-$count3 = mysqli_num_rows($get3);
+
 
 
 $queryMasuk = mysqli_query($conn, "SELECT tanggal, COUNT(*) as total_masuk FROM masuk GROUP BY tanggal ORDER BY tanggal ASC");
@@ -36,8 +46,15 @@ while ($row = mysqli_fetch_assoc($queryKeluar)) {
     $barangKeluar[] = $row['tanggal'];
     $jumlahKeluar[] = $row['total_keluar'];
 }
+// Periksa apakah sesi sudah dimulai
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -71,29 +88,47 @@ while ($row = mysqli_fetch_assoc($queryKeluar)) {
                 transform: scale(1.5);
                 transition: 0.3s ease;
     }
+    .text-right {
+        position: relative;
+        left: 1100px;
+    }
+
+    .text-right p {
+        margin-bottom: 0;
+    }
+    .hg{
+        font-size:12px;
+    }
   </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">
-        <img src="../image/ernov.jpg" alt="Ernov">
-        </a>
+            <a class="navbar-brand" href="pimpinan_index.php">
+                <img src="../image/ernov.png" alt="Ernov">
+            </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
             
             <!-- Navbar-->
+            <div class="text-right">
+            <p style="color: white;">
+                <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+                <span class="hg" style="color: white;">pimpinan</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
+                
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
             </li>
-            </ul>
+        </ul>
         </nav>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
@@ -132,53 +167,63 @@ while ($row = mysqli_fetch_assoc($queryKeluar)) {
                     <h1 class="mt-4">
                  Beranda
                 </h1>
-
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Beranda</li>
-                        </ol>
-                        <div class="row justify-content-center">
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-primary text-white mb-4">
-                                <div class="card-body text-center">
-                                    <strong>Jumlah Barang</strong>
-                                    <br>
-                                    <strong style="font-size: 24px;"><?=$count1;?></strong>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="pimpinan_stock.php">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
+                <br>
+                <br>
+                <div class="row justify-content-center">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-danger text-white mb-4">
+                        <div class="card-body text-center">
+                            <strong>Jumlah Produk</strong>
+                            <br>
+                            <strong style="font-size: 24px;"><?=$count1;?> Pcs</strong>
                         </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-warning text-white mb-4">
-                                <div class="card-body text-center">
-                                    <strong>Jumlah Barang Masuk</strong>
-                                    <br>
-                                    <strong style="font-size: 24px;"><?=$count2;?></strong>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="pimpinan_masuk.php">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="pimpinan_stock.php">Lihat Semua</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
-                        <div class="col-xl-3 col-md-6">
-                            <div class="card bg-success text-white mb-4">
-                                <div class="card-body text-center">
-                                    <strong>Jumlah Barang Keluar</strong>
-                                    <br>
-                                    <strong style="font-size: 24px;"><?=$count3;?></strong>
-                                </div>
-                                <div class="card-footer d-flex align-items-center justify-content-between">
-                                    <a class="small text-white stretched-link" href="pimpinan_keluar.php">View Details</a>
-                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                        
                     </div>
-
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-primary text-white mb-4">
+                        <div class="card-body text-center">
+                            <strong>Total Barang Tersedia</strong>
+                            <br>
+                            <strong style="font-size: 24px;"><?=$totalStock;?> Pcs</strong>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="pimpinan_stock.php">Lihat Semua</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-warning text-white mb-4">
+                        <div class="card-body text-center">
+                            <strong>Jumlah Barang Masuk</strong>
+                            <br>
+                            <strong style="font-size: 24px;"><?=$totalQtyMasuk;?> Pcs</strong>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="pimpinan_masuk.php">Lihat Semua</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card bg-success text-white mb-4">
+                        <div class="card-body text-center">
+                            <strong>Jumlah Barang Keluar</strong>
+                            <br>
+                            <strong style="font-size: 24px;"><?=$totalQtyKeluar;?> Pcs</strong>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-white stretched-link" href="pimpinan_keluar.php">Lihat Semua</a>
+                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
                     <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table mr-1"></i>
@@ -186,129 +231,93 @@ while ($row = mysqli_fetch_assoc($queryKeluar)) {
                             </div>
                             <div class="card-body">
 
+                                
                                 <?php
-                                    $ambildatastock = mysqli_query($conn, "select * from stok where stock < 1");
 
-                                    while($fetch=mysqli_fetch_array($ambildatastock)){
-                                        $barang = $fetch['nama_barang'];
+                                $periode = "bulan"; // Default periode
 
-                                        
-                                        
-                                        ?>
-                                <div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <strong>Perhatian!</strong> Stock <?=$barang;?> telah habis.
-                                </div>
-                                <?php
-                                     }
+                                if(isset($_GET['periode'])) {
+                                    $periode = $_GET['periode'];
+                                }
 
+                                // Ambil data barang masuk per bulan dari tabel masuk
+                                $queryBarangMasuk = "";
+                                if($periode == "bulan") {
+                                    $queryBarangMasuk = mysqli_query($conn, "SELECT YEAR(tanggal) AS tahun, MONTH(tanggal) AS bulan, SUM(qty) AS total_masuk FROM masuk GROUP BY tahun, bulan ORDER BY tahun, bulan ASC");
+                                } else {
+                                    $queryBarangMasuk = mysqli_query($conn, "SELECT tanggal, SUM(qty) AS total_masuk FROM masuk GROUP BY tanggal ORDER BY tanggal ASC");
+                                }
 
+                                $barangMasuk = array();
+                                $jumlahMasuk = array();
+                                while ($row = mysqli_fetch_assoc($queryBarangMasuk)) {
+                                    if($periode == "bulan") {
+                                        $barangMasuk[] = date("M Y", strtotime($row['tahun'] . "-" . $row['bulan']));
+                                    } else {
+                                        $barangMasuk[] = $row['tanggal'];
+                                    }
+                                    $jumlahMasuk[] = $row['total_masuk'];
+                                }
+
+                                // Ambil data barang keluar per bulan dari tabel keluar
+                                $queryBarangKeluar = "";
+                                if($periode == "bulan") {
+                                    $queryBarangKeluar = mysqli_query($conn, "SELECT YEAR(tanggal) AS tahun, MONTH(tanggal) AS bulan, SUM(qty) AS total_keluar FROM keluar GROUP BY tahun, bulan ORDER BY tahun, bulan ASC");
+                                } else {
+                                    $queryBarangKeluar = mysqli_query($conn, "SELECT tanggal, SUM(qty) AS total_keluar FROM keluar GROUP BY tanggal ORDER BY tanggal ASC");
+                                }
+
+                                $barangKeluar = array();
+                                $jumlahKeluar = array();
+                                while ($row = mysqli_fetch_assoc($queryBarangKeluar)) {
+                                    if($periode == "bulan") {
+                                        $barangKeluar[] = date("M Y", strtotime($row['tahun'] . "-" . $row['bulan']));
+                                    } else {
+                                        $barangKeluar[] = $row['tanggal'];
+                                    }
+                                    $jumlahKeluar[] = $row['total_keluar'];
+                                }
                                 ?>
-                    <?php
-                        // Ambil data stok dari tabel stok
-                        $ambilsemuadatastock = mysqli_query($conn, "SELECT * FROM stok ORDER BY stock DESC");
+                                <form method="get">
+                                        <select name="periode" onchange="this.form.submit()">
+                                            <option value="bulan" <?php if($periode == "bulan") echo "selected"; ?>>Per Bulan</option>
+                                            <option value="hari" <?php if($periode == "hari") echo "selected"; ?>>Per Hari</option>
+                                        </select>
+                                    </form>
 
-                        // Periksa apakah query berhasil dieksekusi
-                        if ($ambilsemuadatastock) {
-                            // Inisialisasi array untuk menyimpan data grafik
-                            $barang = array();
-                            $stock = array();
+                                    <canvas id="chartBarang" width="400" height="100"></canvas>
 
-                            // Loop melalui hasil query
-                            while ($row = mysqli_fetch_assoc($ambilsemuadatastock)) {
-                                $barang[] = $row['nama_barang'];
-                                $stock[] = $row['stock'];
-                            }
-
-                            // Ubah data menjadi format JSON
-                            $barang = json_encode($barang);
-                            $stock = json_encode($stock);
-                        } else {
-                            // Tampilkan pesan kesalahan jika query gagal dieksekusi
-                            echo "Error: " . mysqli_error($conn);
-                        }
-                        ?>
-
-                        <!-- Tambahkan elemen HTML untuk menampilkan grafik -->
-
-                            <div class="card mb-4">
-                                <div class="card-header">
-                                    <i class="fas fa-chart-bar mr-1"></i>
-                                    Grafik Stok Barang
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="chartStock" width="500" height="100"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            var ctx = document.getElementById('chartStock').getContext('2d');
-                            var chart = new Chart(ctx, {
-                                type: 'bar',
-                                data: {
-                                    labels: <?php echo $barang; ?>,
-                                    datasets: [{
-                                        label: 'Stock Barang',
-                                        data: <?php echo $stock; ?>,
-                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1
-                                    }]
-                                },
-                                options: {
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true
+                                    <script>
+                                    var ctx = document.getElementById('chartBarang').getContext('2d');
+                                    var chart = new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: <?php echo json_encode(($periode == "bulan") ? $barangMasuk : $barangKeluar); ?>,
+                                            datasets: [{
+                                                    label: 'Barang Masuk',
+                                                    data: <?php echo json_encode($jumlahMasuk); ?>,
+                                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                                    borderWidth: 1
+                                                },
+                                                {
+                                                    label: 'Barang Keluar',
+                                                    data: <?php echo json_encode($jumlahKeluar); ?>,
+                                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                                    borderWidth: 1
+                                                }
+                                            ]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                            });
-                        </script>
-                    <br><br>
-                                    
-                    <div class="card mb-4">
-                        <div class="card-header">
-                                <i class="fas fa-chart-bar mr-1"></i>
-                                Bar Chart Example
-                        </div>
-                            <div class="card-body">
-                                <canvas id="chartBarang" width="400" height="100"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <script>
-                        var ctx = document.getElementById('chartBarang').getContext('2d');
-                        var chart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: <?php echo json_encode($barangMasuk); ?>,
-                                datasets: [{
-                                        label: 'Barang Masuk',
-                                        data: <?php echo json_encode($jumlahMasuk); ?>,
-                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                        borderColor: 'rgba(75, 192, 192, 1)',
-                                        borderWidth: 1
-                                    },
-                                    {
-                                        label: 'Barang Keluar',
-                                        data: <?php echo json_encode($jumlahKeluar); ?>,
-                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                        borderColor: 'rgba(255, 99, 132, 1)',
-                                        borderWidth: 1
-                                    }
-                                ]
-                            },
-                            options: {
-                                scales: {
-                                    y: {
-                                        beginAtZero: true
-                                    }
-                                }
-                            }
-                        });
-                    </script>
+                                    });
+                                    </script>
 
 
 

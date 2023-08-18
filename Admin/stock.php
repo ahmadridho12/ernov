@@ -12,9 +12,16 @@ if ($_SESSION['role'] !="admin"){
 //ambil data total
 $get1 = mysqli_query($conn, "select * from stok");
 $count1 = mysqli_num_rows($get1);
+///// total stok
+$queryTotalStock = mysqli_query($conn, "SELECT SUM(stock) AS total_stock FROM stok");
+$rowTotalStock = mysqli_fetch_assoc($queryTotalStock);
+$totalStock = $rowTotalStock['total_stock'];
 
-
+///// mengambil username yang login
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,16 +56,34 @@ $count1 = mysqli_num_rows($get1);
                 top: 0;
                 left: 0;
             }
-          
+            .text-right {
+            position: relative;
+            left: 1100px;
+            }
+            .text-right p {
+                margin-bottom: 0;
+            }
+            .hg{
+                font-size:12px;
+            }
+            
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand" href="index.html">
-        <img src="images/ernov.jpg" alt="Ernov">
+        <img src="images/ernov.png" alt="Ernov">
         </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-            
+            <!--menampilkan username yg melakukan login -->
+            <div class="text-right">
+            <p style="color: white;">
+                <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+                <span class="hg" style="color: white;">admin</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
@@ -66,8 +91,6 @@ $count1 = mysqli_num_rows($get1);
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
@@ -85,7 +108,7 @@ $count1 = mysqli_num_rows($get1);
                                 Beranda
                             </a>
                             <a class="nav-link" href="stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-cube"></i></div>
                                 Stock Barang
                             </a>
                             <a class="nav-link" href="kategori.php">
@@ -118,55 +141,77 @@ $count1 = mysqli_num_rows($get1);
                     <h1 class="mt-4">
                 
                         Stok Barang
-
-
                         </h1>
-                        
-                      
-                       
-                      
                         <div class="card mb-4">
                             <div class="card-header">
                                  <!-- Button to Open the Modal -->
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                                    Tambah Barang Baru
+                                    Tambah Produk Baru
                                 </button>
-                                
-                                
-                                <a href="export.php" class="btn btn-info"> Cetak Laporan </a> 
+                                <a href="export.php" class="btn btn-info float-right">
+                                <i class="fas fa-print"></i> 
+                                </a> 
                                 <br>
                                 <br>
-                                <ul class="list-group">
-                                <li class="list-group-item"><h5>Total Barang : <?=$count1;?></h5></li>
-                               
-                                </ul>
+                                <div class="row justify-content-left">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-danger text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Jumlah Produk</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$count1;?> Pcs</strong>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-primary text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Total Barang Tersedia</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$totalStock;?> Pcs</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                
                             </div>
                             
+                            <div class="card-body">
+                            <?php
+                            $ambildatastockHabis = mysqli_query($conn, "SELECT * FROM stok WHERE stock = 0");
+                            $ambildatastockMenipis = mysqli_query($conn, "SELECT * FROM stok WHERE stock > 0 AND stock <= 5");
+
+                            while ($fetchHabis = mysqli_fetch_array($ambildatastockHabis)) {
+                                $barangHabis = $fetchHabis['nama_barang'];
+
+                                // Menampilkan peringatan untuk barang yang stok habis
+                                ?>
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <strong>Perhatian!</strong> Stok <?=$barangHabis;?> telah habis.
+                                </div>
+                                <?php
+                            }
+
+                            while ($fetchMenipis = mysqli_fetch_array($ambildatastockMenipis)) {
+                                $barangMenipis = $fetchMenipis['nama_barang'];
+                                $stockMenipis = $fetchMenipis['stock'];
+
+                                // Menampilkan peringatan untuk barang yang stok menipis
+                                ?>
+                                <div class="alert alert-warning alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <strong>Perhatian!</strong> Stok <?=$barangMenipis;?> tersisa <?=$stockMenipis;?>. Segera tambahkan stok.
+                                </div>
+                                <?php
+                            }
+                            ?>
                             <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table mr-1"></i>
-                                DataTable Example
+                                Data barang
                             </div>
-                            <div class="card-body">
-
-                                <?php
-                                    $ambildatastock = mysqli_query($conn, "select * from stok where stock < 1");
-
-                                    while($fetch=mysqli_fetch_array($ambildatastock)){
-                                        $barang = $fetch['nama_barang'];
-
-                                        
-                                        
-                                        ?>
-                                <div class="alert alert-danger alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <strong>Perhatian!</strong> Stock <?=$barang;?> telah habis.
-                                </div>
-                                <?php
-                                     }
-
-
-                                ?>
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                         <thead>
@@ -178,7 +223,7 @@ $count1 = mysqli_num_rows($get1);
                                                 <th>Harga </th>
                                                 <th>Jenis</th>
                                                 <th>Stok</th>
-                                                <th>Aksi</th>
+                                                <th style="text-align: right;">Aksi</th>
                                                 
                                             </tr>
                                         </thead>
@@ -226,14 +271,14 @@ $count1 = mysqli_num_rows($get1);
                                                 <td>Rp<?php echo number_format($harga, 0,',','.'); ?></td>
                                                 <td><?php echo$deskripsi;?></td>
                                                 <td><?php echo$stock;?></td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idb;?>">
-                                                    Ubah
-                                                </button> 
+                                                <i class="fas fa-edit"></i> 
+                                                </button>
                                                 
                                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idb;?>">
-                                                    Hapus
-                                                 </button> 
+                                            <i class="fas fa-trash-alt"></i> 
+                                            </button>
                                                 </td>
                                                 
                                             </tr>
@@ -275,34 +320,29 @@ $count1 = mysqli_num_rows($get1);
                                             
 
                                                      <!-- delete modal -->
-                                                     <div class="modal fade" id="delete<?=$idb;?>">
-                                                <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                
-                                                    <!-- Modal Header -->
-                                                    <div class="modal-header">
-                                                    <h4 class="modal-title">Hapus barang?</h4>
-                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <div class="modal fade" id="delete<?=$idb;?>">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <!-- Modal Header -->
+                                                            <div class="modal-header">
+                                                                <h4 class="modal-title">Hapus barang?</h4>
+                                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            </div>
+                                                            <!-- Modal body -->
+                                                            <form method="post">
+                                                                <div class="modal-body">
+                                                                    Apakah anda yakin ingin menghapus <?=$nama_barang;?>?
+                                                                    <input type="hidden" name="idb" value="<?=$idb;?>">
+                                                                </div>
+                                                                <!-- Modal footer -->
+                                                                <div class="modal-footer">
+                                                                    <button type="submit" class="btn btn-danger" name="hapusbarang">YA</button>
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
-                                                    
-                                                    <!-- Modal body -->
-                                                    <form method="post">
-                                                    <div class="modal-body">
-                                                    Apakah anda yakin ingin menghapus <?=$nama_barang;?>?
-                                                    
-                                                    <input type="hidden" name="idb" value="<?=$idb;?>">
-                                                    <br>
-                                                    <br>
-                                                    <button type="submit" class="btn btn-danger" name="hapusbarang">Submit</button>
-                                                    <br>
-                                                    </div>
-                                                    </form>
-                                                    <!-- Modal footer -->
-                                                
-                                                    
                                                 </div>
-                                                </div>
-                                            </div>
                                             
                                         <?php
 
@@ -378,7 +418,7 @@ $count1 = mysqli_num_rows($get1);
         <br>
         <input type="number" name="stock" placeholder="Stock" class="form-control" required>
         <br>
-        <input type="file" name="file"  class="form-control">
+        <input type="file" name="file"  class="form-control" required>
         <br>
         <button type="submit" class="btn btn-primary" name="addnewbarang">Submit</button>
 

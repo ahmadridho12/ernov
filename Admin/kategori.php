@@ -11,8 +11,17 @@ if ($_SESSION['role'] !="admin"){
 
 $get1 = mysqli_query($conn, "select * from kategori");
 $count1 = mysqli_num_rows($get1);
+
+// Periksa apakah sesi sudah dimulai
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Ambil informasi role pengguna dari sesi
+$loggedInUserUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
 ?>
-!
+
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -40,15 +49,32 @@ $count1 = mysqli_num_rows($get1);
                 top: 0;
                 left: 0;
             }
+            .text-right {
+            position: relative;
+            left: 1100px;
+            }
+            .text-right p {
+                margin-bottom: 0;
+            }
+            .hg{
+                font-size:12px;
+            }
         </style>
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <a class="navbar-brand" href="index.html">
-            <img src="images/ernov.jpg" alt="Ernov">
+            <img src="images/ernov.png" alt="Ernov">
             </a>
             <button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button>
-            
+            <div class="text-right">
+            <p style="color: white;">
+            <strong style="color: white;"><?php echo $loggedInUserUsername; ?></strong>
+            <span class="hg" style="color: white;">admin</span>
+            </p>
+            </div>
+            </li>
+            </ul>
             <!-- Navbar-->
             <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
@@ -56,8 +82,6 @@ $count1 = mysqli_num_rows($get1);
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a>
-                    <a class="dropdown-item" href="#">Activity Log</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="../logout.php">Keluar</a>
                 </div>
@@ -75,7 +99,7 @@ $count1 = mysqli_num_rows($get1);
                                 Beranda
                             </a>
                             <a class="nav-link" href="stock.php">
-                                <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                                <div class="sb-nav-link-icon"><i class="fas fa-cube"></i></div>
                                 Stock Barang
                             </a>
                             <a class="nav-link" href="kategori.php">
@@ -107,11 +131,6 @@ $count1 = mysqli_num_rows($get1);
                 <main>
                     <div class="container-fluid">
                         <h1 class="mt-4">Kategori Barang</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Kategori</li>
-                        </ol>
-                       
-                      
                         <div class="card mb-4">
                             <div class="card-header">
                                  <!-- Button to Open the Modal -->
@@ -120,14 +139,17 @@ $count1 = mysqli_num_rows($get1);
                                 </button>
                                 <br>
                                 <br>
-                                <ul class="list-group">
-                                <li class="list-group-item"><h5>Total Kategori: <?=$count1;?></h5></li>
-                               
-                                </ul>
-                                
-                                
-
-                              
+                                <div class="row justify-content-left">
+                                <div class="col-xl-3 col-md-6">
+                                    <div class="card bg-secondary text-white mb-4">
+                                        <div class="card-body text-center">
+                                            <strong>Kategori barang</strong>
+                                            <br>
+                                            <strong style="font-size: 24px;"><?=$count1;?> Pcs</strong>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
                             </div>
                             <div class="card mb-4">
                             <div class="card-header">
@@ -141,7 +163,7 @@ $count1 = mysqli_num_rows($get1);
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama Kategori</th>
-                                                <th>Aksi</th>
+                                                <th style="text-align: right;">Aksi</th>
                                                 
 
             
@@ -152,7 +174,7 @@ $count1 = mysqli_num_rows($get1);
                                         <tbody>
                                            
                                         <?php
-                                            $getKategori = mysqli_query($conn, "SELECT * FROM kategori");
+                                            $getKategori = mysqli_query($conn, "SELECT * FROM kategori ORDER BY id_kategori DESC");
 
                                             $no = 1;
                                             while ($dataKategori = mysqli_fetch_array($getKategori)) {
@@ -163,14 +185,16 @@ $count1 = mysqli_num_rows($get1);
                                             <tr>
                                                 <td><?= $no++; ?></td>
                                                 <td><?= $namaKategori; ?></td>
-                                                <td>
+                                                <td style="text-align: right;">
                                                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#edit<?=$idKategori;?>">
-                                                    Ubah
-                                                </button> 
+                                                <i class="fas fa-edit"></i> 
+                                                </button>
+ 
                                                 
                                                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete<?=$idKategori;?>">
-                                                    Hapus
-                                                 </button> 
+                                                <i class="fas fa-trash-alt"></i>
+                                                </button>
+
                                                 </td>
                                                 
                                             </tr>
@@ -233,7 +257,8 @@ $count1 = mysqli_num_rows($get1);
                                                     <input type="hidden" name="id_kategori" value="<?=$idKategori;?>">
                                                     <br>
                                                     <br>
-                                                    <button type="submit" class="btn btn-danger" name="hapuskategori">Submit</button>
+                                                    <button type="submit" class="btn btn-danger" name="hapuskategori">Ya</button>
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
                                                     <br>
                                                     </div>
                                                     </form>

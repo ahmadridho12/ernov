@@ -47,12 +47,18 @@ if (isset($_SESSION['username'])) {
     .btn-primary:hover {
         background-color: #0069d9;
     }
+    body {
+            background-image: url("image/1.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
 </style>
 
 </head>
 
-<body class="bg-gradient-primary">
-
+<body >
+    
     <div class="container" style="margin-top :110px">
         <div class="card o-hidden border-0 shadow-lg my-5"  >
             <div class="card-body p-0"  >
@@ -76,7 +82,7 @@ if (isset($_SESSION['username'])) {
                                     <input type="password" class="form-control form-control-user" id="inputpassword" name="password"
                                         placeholder="Masukan Password" required>
                                         <br>
-                                        <p><a href="beranda.php">Lupa Password?</a></p>
+                                        <p><a href="beranda.php" style="color: red; font-size: 14px;">Lupa Password?</a></p>
                         <br>
                         <br>
                         <div class="row">
